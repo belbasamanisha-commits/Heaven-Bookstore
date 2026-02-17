@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Heaven Bookstore{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="mb-4"><i class="fas fa-cog"></i> Admin Dashboard</h2>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-5">
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-book"></i></div>
+                <div class="stat-info">
+                    <h3>{{ total_books }}</h3>
+                    <p>Total Books</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-info">
+                    <h3>{{ total_users }}</h3>
+                    <p>Total Users</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-star"></i></div>
+                <div class="stat-info">
+                    <h3>{{ total_reviews }}</h3>
+                    <p>Total Reviews</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Book Management -->
+    <div class="admin-section">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3>Book Management</h3>
+            <a href="{{ url_for('add_book') }}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Add New Book
+            </a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-striped admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Category</th>
+                        <th>Price (NPR)</th>
+                        <th>Stock</th>
+                        <th>Rating</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for book in books %}
+                    <tr>
+                        <td>{{ book.id }}</td>
+                        <td>{{ book.title }}</td>
+                        <td>{{ book.author }}</td>
+                        <td><span class="badge bg-secondary">{{ book.category }}</span></td>
+                        <td>Rs. {{ "%.2f"|format(book.price_npr) }}</td>
+                        <td>
+                            {% if book.stock_quantity > 0 %}
+                            <span class="badge bg-success">{{ book.stock_quantity }}</span>
+                            {% else %}
+                            <span class="badge bg-danger">Out of Stock</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ "%.1f"|format(book.average_rating) }} <i class="fas fa-star text-warning"></i></td>
+                        <td>
+                            <a href="{{ url_for('edit_book', id=book.id) }}" class="btn btn-sm btn-primary"
+                                title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button class="btn btn-sm btn-danger"
+                                onclick="confirmDelete({{ book.id }}, '{{ book.title }}')" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete "<span id="bookTitle"></span>"?</p>
+                <p class="text-danger"><strong>This action cannot be undone.</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="POST" id="deleteForm" class="d-inline">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function confirmDelete(bookId, bookTitle) {
+        document.getElementById('bookTitle').textContent = bookTitle;
+        document.getElementById('deleteForm').action = "{{ url_for('delete_book', id=0) }}".replace('0', bookId);
+        new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    }
+</script>
+{% endblock %}

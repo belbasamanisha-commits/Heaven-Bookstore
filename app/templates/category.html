@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}{{ category }} - Heaven Bookstore{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+            <li class="breadcrumb-item active">{{ category }}</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="section-title">{{ category }}</h2>
+        <p class="text-muted mb-0">{{ books|length }} books found</p>
+    </div>
+
+    {% if books %}
+    <div class="row g-4">
+        {% for book in books %}
+        <div class="col-lg-2 col-md-3 col-sm-4 col-6">
+            <div class="book-card">
+                <a href="{{ url_for('book_detail', id=book.id) }}">
+                    <div class="book-image">
+                        <img src="{{ book.image_url or 'https://via.placeholder.com/200x300/8D6E63/FFFFFF?text=' + book.title[:1] }}"
+                            alt="{{ book.title }}" loading="lazy">
+                    </div>
+                </a>
+                <div class="book-info">
+                    <h3 class="book-title">
+                        <a href="{{ url_for('book_detail', id=book.id) }}">{{ book.title }}</a>
+                    </h3>
+                    <p class="book-author">{{ book.author }}</p>
+                    <div class="book-rating">
+                        {% for i in range(5) %}
+                        {% if i < book.average_rating %} <i class="fas fa-star"></i>
+                            {% else %}
+                            <i class="far fa-star"></i>
+                            {% endif %}
+                            {% endfor %}
+                            <span class="rating-text">({{ "%.1f"|format(book.average_rating) }})</span>
+                    </div>
+                    <p class="book-price">Rs. {{ "%.2f"|format(book.price_npr) }}</p>
+                    {% if current_user.is_authenticated %}
+                    <button class="btn btn-add-cart add-to-cart-btn" data-book-id="{{ book.id }}">
+                        <i class="fas fa-cart-plus"></i> ADD TO CART
+                    </button>
+                    {% else %}
+                    <a href="{{ url_for('login') }}" class="btn btn-add-cart">
+                        <i class="fas fa-sign-in-alt"></i> LOGIN TO BUY
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> No books found in this category.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
