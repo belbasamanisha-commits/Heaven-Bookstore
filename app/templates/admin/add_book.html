@@ -1,102 +1,150 @@
 {% extends "base.html" %}
 
-{% block title %}Add Book - Admin - Heaven Bookstore{% endblock %}
+{% block title %}Add New Book - Heaven Bookstore{% endblock %}
 
 {% block content %}
 <div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="admin-form-card">
-                <h2 class="mb-4"><i class="fas fa-plus-circle"></i> Add New Book</h2>
 
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a></li>
+            <li class="breadcrumb-item active">Add New Book</li>
+        </ol>
+    </nav>
+
+    <h2 class="mb-4"><i class="fas fa-plus-circle"></i> Add New Book</h2>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="admin-section p-4">
                 <form method="POST" action="{{ url_for('add_book') }}">
                     {{ form.hidden_tag() }}
 
+                    <!-- Title -->
+                    <div class="mb-3">
+                        {{ form.title.label(class="form-label fw-bold") }}
+                        {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else ""), placeholder="e.g. The Great Gatsby") }}
+                        {% for error in form.title.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Author -->
+                    <div class="mb-3">
+                        {{ form.author.label(class="form-label fw-bold") }}
+                        {{ form.author(class="form-control" + (" is-invalid" if form.author.errors else ""), placeholder="e.g. F. Scott Fitzgerald") }}
+                        {% for error in form.author.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Price and Stock side by side -->
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            {{ form.title.label(class="form-label") }}
-                            {{ form.title(class="form-control" + (" is-invalid" if form.title.errors else "")) }}
-                            {% if form.title.errors %}
-                            <div class="invalid-feedback">
-                                {% for error in form.title.errors %}{{ error }}{% endfor %}
+                            {{ form.price_npr.label(class="form-label fw-bold") }}
+                            <div class="input-group">
+                                <span class="input-group-text">Rs.</span>
+                                {{ form.price_npr(class="form-control" + (" is-invalid" if form.price_npr.errors else ""), placeholder="e.g. 1250") }}
+                                {% for error in form.price_npr.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
                             </div>
-                            {% endif %}
                         </div>
-
                         <div class="col-md-6 mb-3">
-                            {{ form.author.label(class="form-label") }}
-                            {{ form.author(class="form-control" + (" is-invalid" if form.author.errors else "")) }}
-                            {% if form.author.errors %}
-                            <div class="invalid-feedback">
-                                {% for error in form.author.errors %}{{ error }}{% endfor %}
-                            </div>
-                            {% endif %}
+                            {{ form.stock_quantity.label(class="form-label fw-bold") }}
+                            {{ form.stock_quantity(class="form-control" + (" is-invalid" if form.stock_quantity.errors else ""), placeholder="e.g. 50") }}
+                            {% for error in form.stock_quantity.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            {{ form.price_npr.label(class="form-label") }}
-                            {{ form.price_npr(class="form-control" + (" is-invalid" if form.price_npr.errors else ""))
-                            }}
-                            {% if form.price_npr.errors %}
-                            <div class="invalid-feedback">
-                                {% for error in form.price_npr.errors %}{{ error }}{% endfor %}
-                            </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="col-md-4 mb-3">
-                            {{ form.category.label(class="form-label") }}
-                            {{ form.category(class="form-select" + (" is-invalid" if form.category.errors else "")) }}
-                            {% if form.category.errors %}
-                            <div class="invalid-feedback">
-                                {% for error in form.category.errors %}{{ error }}{% endfor %}
-                            </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="col-md-4 mb-3">
-                            {{ form.stock_quantity.label(class="form-label") }}
-                            {{ form.stock_quantity(class="form-control" + (" is-invalid" if form.stock_quantity.errors
-                            else "")) }}
-                            {% if form.stock_quantity.errors %}
-                            <div class="invalid-feedback">
-                                {% for error in form.stock_quantity.errors %}{{ error }}{% endfor %}
-                            </div>
-                            {% endif %}
-                        </div>
-                    </div>
-
+                    <!-- Category -->
                     <div class="mb-3">
-                        {{ form.image_url.label(class="form-label") }}
-                        {{ form.image_url(class="form-control" + (" is-invalid" if form.image_url.errors else ""),
-                        placeholder="https://example.com/book-cover.jpg") }}
-                        {% if form.image_url.errors %}
-                        <div class="invalid-feedback">
-                            {% for error in form.image_url.errors %}{{ error }}{% endfor %}
-                        </div>
-                        {% endif %}
+                        {{ form.category.label(class="form-label fw-bold") }}
+                        {{ form.category(class="form-select" + (" is-invalid" if form.category.errors else "")) }}
+                        {% for error in form.category.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
                     </div>
 
+                    <!-- Image URL -->
                     <div class="mb-3">
-                        {{ form.description.label(class="form-label") }}
-                        {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""),
-                        rows="5") }}
-                        {% if form.description.errors %}
-                        <div class="invalid-feedback">
-                            {% for error in form.description.errors %}{{ error }}{% endfor %}
-                        </div>
-                        {% endif %}
+                        {{ form.image_url.label(class="form-label fw-bold") }}
+                        {{ form.image_url(class="form-control" + (" is-invalid" if form.image_url.errors else ""), placeholder="https://example.com/book-cover.jpg", id="imageUrlInput") }}
+                        {% for error in form.image_url.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                        <div class="form-text text-muted">Paste a direct link to the book cover image.</div>
                     </div>
 
+                    <!-- Description -->
+                    <div class="mb-4">
+                        {{ form.description.label(class="form-label fw-bold") }}
+                        {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), rows="5", placeholder="Write a short description of the book...") }}
+                        {% for error in form.description.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Buttons -->
                     <div class="d-flex gap-2">
-                        {{ form.submit(class="btn btn-success btn-lg") }}
-                        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary btn-lg">Cancel</a>
+                        {{ form.submit(class="btn btn-success btn-lg px-4") }}
+                        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary btn-lg px-4">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
                     </div>
                 </form>
             </div>
         </div>
+
+        <!-- Live Image Preview -->
+        <div class="col-md-4">
+            <div class="admin-section p-4 text-center">
+                <h5 class="mb-3"><i class="fas fa-image"></i> Cover Preview</h5>
+                <img id="imagePreview"
+                     src="https://via.placeholder.com/250x370/8D6E63/FFFFFF?text=Book+Cover"
+                     alt="Book cover preview"
+                     class="img-fluid rounded"
+                     style="max-height: 370px; object-fit: cover;">
+                <p class="text-muted mt-2 small">Preview updates as you type the image URL</p>
+            </div>
+        </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Live image preview
+    const imageUrlInput = document.getElementById('imageUrlInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const fallbackImage = "https://via.placeholder.com/250x370/8D6E63/FFFFFF?text=Book+Cover";
+
+    imageUrlInput.addEventListener('input', function () {
+        const url = this.value.trim();
+        if (url) {
+            imagePreview.src = url;
+            imagePreview.onerror = function () {
+                imagePreview.src = fallbackImage;
+            };
+        } else {
+            imagePreview.src = fallbackImage;
+        }
+    });
+</script>
 {% endblock %}

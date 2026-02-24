@@ -25,15 +25,16 @@
                         <a href="{{ url_for('book_detail', id=book.id) }}">{{ book.title }}</a>
                     </h3>
                     <p class="book-author">{{ book.author }}</p>
-                    <div class="book-rating">
-                        {% for i in range(5) %}
-                        {% if i  book.average_rating %} <i class="fas fa-star"></i>
-                            {% else %}
-                            <i class="far fa-star"></i>
-                            {% endif %}
-                            {% endfor %}
-                            <span class="rating-text">({{ "%.1f"|format(book.average_rating) }})</span>
-                    </div>
+                 <div class="book-rating">
+    {% for i in range(5) %}
+        {% if i < book.average_rating %}
+            <i class="fas fa-star"></i>
+        {% else %}
+            <i class="far fa-star"></i>
+        {% endif %}
+    {% endfor %}
+    <span class="rating-text">({{ "%.1f"|format(book.average_rating) }})</span>
+</div>
                     <p class="book-price">Rs. {{ "%.2f"|format(book.price_npr) }}</p>
                     {% if current_user.is_authenticated %}
                     <button class="btn btn-add-cart add-to-cart-btn" data-book-id="{{ book.id }}">

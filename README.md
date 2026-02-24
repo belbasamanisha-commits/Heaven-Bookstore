@@ -24,12 +24,12 @@
 
 ### Admin Account (Full Access)
 - **Username:** `admin`
-- **Password:** `admin123`
+- **Password:** `[REDACTED]`
 - **Access:** Admin dashboard, book management, all features
 
 ### Test User Account
 - **Username:** `john_doe`
-- **Password:** `password123`
+- **Password:** `[REDACTED]`
 - **Access:** Shopping cart, reviews, profile
 
 ## Quick Feature Tour

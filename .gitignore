@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+venv/
+.venv/
+.env
+instance/
+# Database
+bookstore.db
+*.sqlite3
+# IDE / OS
+.vscode/
+.DS_Store
+# Packages
+*.egg-info/
+dist/
+build/
